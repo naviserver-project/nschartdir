@@ -1,0 +1,16 @@
+2003-01-15 Vlad Seryakov vlad@crystalballinc.com
+
+	* fixed trend layer allocation
+
+2002-10-27 Vlad Seryakov vlad@crystalballinc.com
+
+	* added xaxis2, yaxis2 commands
+
+2002-10-19 Vlad Seryakov vlad@crystalballinc.com
+
+	* added image,return,addmark,addzone commands
+
+2002-10-10 Vlad Seryakov vlad@crystalballinc.com
+
+	* initial version
+

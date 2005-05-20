@@ -1,0 +1,46 @@
+Chart Module for AOLserver 3.x, 4.x
+Release 0.9.6
+vlad@crystalballinc.com
+
+This is AOLserver module that implements interface to ChartDirector
+from www.advsofteng.com
+
+/*--------------------------------------------------------------------*/
+
+Compiling and Installing
+
+To compile this driver, you'll need to have ChartDirector library installed,
+current Makefile assumes that it is installed in /usr/local/chartdir.
+AOLServer can be installed or source distribution may be used.
+There is variable CDFLAGS and CDLIBS in the Makefile which points to 
+installation/dustribution directory.
+
+Copy of ChartDirector for Linux is also can be downloaded from
+ftp.crystalballinc.com/pub/vlad/chartdir.tar.gz.
+
+Configuring
+
+ns_section      ns/server/${server}/module/nschartdir
+ns_param        idle_timeout    600
+ns_param	gc_interval	600
+
+idle_timeout is in seconds, it defines inactivity period after which
+sessions will be closed by garbage collector which is called every
+gc_interval seconds.
+
+Usage
+
+webimage.tcl file can be used as an example of dynamic image 
+generation in the web page, other examples generate images into files.
+
+Testing
+
+In order to run scripts from test subdirectory, nscp shell can be used,
+there is no path defined in the scripts, so all *.png files from test
+directory should be copied to aolserver home or edited to reflect actual
+location, library assumes current directory for all included files.
+
+Authors
+
+     Vlad Seryakov vlad@crystalballinc.com
+
