@@ -194,7 +194,7 @@ static void ChartGC(void *arg)
     for(chart = chartList;chart;) {
       if(now - chart->access_time > chartIdleTimeout) {
         Chart *next = chart->next;
-        Ns_Log(Notice,"ns_chartdir: GC: inactive chart %d",chart->id);
+        Ns_Log(Notice,"ns_chartdir: GC: inactive chart %ld",chart->id);
         freeChart(chart,0);
         chart = next;
         continue;
@@ -456,15 +456,16 @@ static int setWallpaper(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *
 
 static int XAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
+    int cmd;
     enum commands {
         cmdSetTitle, cmdSetLabels,
         cmdSetLabelStyle,cmdSetIndent,
         cmdSetLinearScale, cmdSetTickLength,
         cmdSetWidth, cmdAddMark,
         cmdAddZone
-    } cmd;
+    };
 
-    static char *sCmd[] = {
+    static const char *sCmd[] = {
         "settitle", "setlabels",
         "setlabelstyle", "setindent",
         "setlinearscale", "setticklength",
@@ -626,6 +627,7 @@ static int XAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_I
 
 static int YAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
+    int cmd;
     enum commands {
         cmdSetTitle, cmdSetFormat,
         cmdSetLabelStyle, cmdSetTopMargin,
@@ -634,9 +636,9 @@ static int YAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_I
         cmdSetTickLength, cmdSetWidth,
         cmdAddMark, cmdAddZone,
         cmdSyncYAxis, cmdSetYAxisOnRight
-    } cmd;
+    };
 
-    static char *sCmd[] = {
+    static const char *sCmd[] = {
         "settitle", "setformat",
         "setlabelstyle", "settopmargin",
         "setlinearscale", "setautoscale",
@@ -856,7 +858,7 @@ static int YAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_I
 
 static int LayerCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
-    int layer, datasetID;
+    int cmd, layer, datasetID;
     DataSet *dataset;
 
     enum commands {
@@ -867,9 +869,9 @@ static int LayerCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inte
         cmdSetBarGap, cmdSetGapColor,
         cmdSetBorderColor, cmdSetDataLabelStyle,
         cmdSetAggregateLabelStyle
-    } cmd;
+    };
 
-    static char *sCmd[] = {
+    static const char *sCmd[] = {
         "create", "setlinewidth",
         "setdatasymbol", "dataset",
         "setdatacolor", "set3d",
@@ -1289,9 +1291,6 @@ static int addText(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inter
     const char *align;
     int fontsize = 8;
     int fontcolor = TextColor;
-    int bgcolor = Transparent;
-    int edgecolor = Transparent;
-    int border = 1;
     int vertical = 0;
     double angle = 0;
 
@@ -1314,12 +1313,13 @@ static int addText(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inter
 
 static int PieCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
+    int cmd;
     enum commands {
         cmdSetData, cmdSet3D,
         cmdSetPieSize
-    } cmd;
+    };
 
-    static char *sCmd[] = {
+    static const char *sCmd[] = {
         "setdata", "set3d",
         "setpiesize",
         0
@@ -1385,7 +1385,7 @@ static int PieCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp
 
 static int ChartCmd(ClientData arg,Tcl_Interp *interp,int objc,Tcl_Obj *CONST objv[])
 {
-    int i;
+    int i,cmd;
     Chart *chart;
 
     enum commands {
@@ -1407,9 +1407,9 @@ static int ChartCmd(ClientData arg,Tcl_Interp *interp,int objc,Tcl_Obj *CONST ob
         cmdPie,
         cmdSave, cmdDestroy,
         cmdImage, cmdReturn
-    } cmd;
+    };
 
-    static char *sCmd[] = {
+    static const char *sCmd[] = {
         "gc", "charts",
         "version",
         "novalue", "transparentcolor",
