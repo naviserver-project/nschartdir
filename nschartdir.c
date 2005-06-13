@@ -415,7 +415,7 @@ static int setBgImage(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *in
 static int setColors(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     char *name;
-    int *palette;
+    int *palette = 0;
     int argc = 0;
     Tcl_Obj **argv;
 
@@ -1249,7 +1249,7 @@ static int patternColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *
 static int gradientColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int *array,argc;
-    char *name;
+    char *name = 0;
     Tcl_Obj **argv;
     double angle = 90;
     double scale = 1;
@@ -1288,7 +1288,7 @@ static int addText(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inter
     int x,y;
     const char *text;
     const char *font = 0;
-    const char *align;
+    const char *align = 0;
     int fontsize = 8;
     int fontcolor = TextColor;
     int vertical = 0;
@@ -1386,7 +1386,7 @@ static int PieCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp
 static int ChartCmd(ClientData arg,Tcl_Interp *interp,int objc,Tcl_Obj *CONST objv[])
 {
     int i,cmd;
-    Chart *chart;
+    Chart *chart = 0;
 
     enum commands {
         cmdGc, cmdCharts,
