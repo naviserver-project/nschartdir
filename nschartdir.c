@@ -146,7 +146,8 @@ NS_EXPORT int Ns_ModuleInit(char *server, char *module)
       Ns_Log(Notice,"ns_chartdir: scheduling GC proc for every %d secs",chartGCInterval);
     }
     Ns_MutexSetName2(&chartMutex,"nschartdir","chart");
-    return Ns_TclInitInterps(server,ChartInterpInit,NULL);
+    Ns_TclRegisterTrace(server, ChartInterpInit, 0, NS_TCL_TRACE_CREATE);
+    return NS_OK;
 }
 
 }
