@@ -1,3 +1,7 @@
+2005-08-24 Vlad Seryakov vlad@crystalballinc.com
+
+	* update to support ChartDirector 4.0
+
 2003-01-15 Vlad Seryakov vlad@crystalballinc.com
 
 	* fixed trend layer allocation

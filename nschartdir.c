@@ -73,13 +73,13 @@ typedef struct _Chart {
      LineLayer *line;
      TrendLayer *trend;
    } layers[MAX_LAYERS];
-} Chart;
+} Ns_Chart;
 
 static int ChartCmd(ClientData arg,Tcl_Interp *interp,int objc,Tcl_Obj *CONST objv[]);
 static int ChartInterpInit(Tcl_Interp *interp, void *context);
 static void ChartGC(void *arg);
 
-static Chart *chartList = 0;
+static Ns_Chart *chartList = 0;
 static Ns_Mutex chartMutex;
 static int chartIdleTimeout = 600;
 static int chartGCInterval = 600;
@@ -161,9 +161,9 @@ static int ChartInterpInit(Tcl_Interp *interp, void *context)
     return NS_OK;
 }
 
-static Chart *getChart(unsigned long id)
+static Ns_Chart *getChart(unsigned long id)
 {
-   Chart *chart;
+   Ns_Chart *chart;
 
    Ns_MutexLock(&chartMutex);
    for(chart = chartList;chart;chart = chart->next)
@@ -172,7 +172,7 @@ static Chart *getChart(unsigned long id)
    return chart;
 }
 
-static void freeChart(Chart *chart,int lock)
+static void freeChart(Ns_Chart *chart,int lock)
 {
     if(!chart) return;
 
@@ -188,13 +188,13 @@ static void freeChart(Chart *chart,int lock)
 // Garbage collection routine, closes expired charts
 static void ChartGC(void *arg)
 {
-    Chart *chart;
+    Ns_Chart *chart;
     time_t now = time(0);
 
     Ns_MutexLock(&chartMutex);
     for(chart = chartList;chart;) {
       if(now - chart->access_time > chartIdleTimeout) {
-        Chart *next = chart->next;
+        Ns_Chart *next = chart->next;
         Ns_Log(Notice,"ns_chartdir: GC: inactive chart %ld",chart->id);
         freeChart(chart,0);
         chart = next;
@@ -228,9 +228,9 @@ static int chartColor(Tcl_Interp *interp,Tcl_Obj *obj,int *color)
     return TCL_OK;
 }
 
-static Chart *createChart(int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static Ns_Chart *createChart(int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
-    Chart *chart;
+    Ns_Chart *chart;
     char *type;
     int width = 500;
     int height = 300;
@@ -248,7 +248,7 @@ static Chart *createChart(int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
       Tcl_WrongNumArgs(interp,2,objv,"type width height ?bgcolor? ?edgecolor? ?border?");
       return 0;
     }
-    chart = (Chart*)ns_calloc(1,sizeof(Chart));
+    chart = (Ns_Chart*)ns_calloc(1,sizeof(Ns_Chart));
     Ns_MutexLock(&chartMutex);
     chart->id = ++chartID;
     Ns_MutexUnlock(&chartMutex);
@@ -276,7 +276,7 @@ static Chart *createChart(int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
     return chart;
 }
 
-static int setBackground(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setBackground(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int bgcolor;
     int edgecolor = -1;
@@ -293,7 +293,7 @@ static int setBackground(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp 
     return TCL_OK;
 }
 
-static int setSize(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setSize(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int width,height;
 
@@ -307,7 +307,7 @@ static int setSize(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inter
     return TCL_OK;
 }
 
-static int setPlotArea(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setPlotArea(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int x,y,width,height;
     int bgcolor = Transparent;
@@ -333,7 +333,7 @@ static int setPlotArea(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *i
     return TCL_OK;
 }
 
-static int addLegend(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int addLegend(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int x,y;
     int vertical = true;
@@ -367,7 +367,7 @@ static int addLegend(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *int
     return TCL_OK;
 }
 
-static int addTitle(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int addTitle(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     const char *title;
     const char *font = 0;
@@ -394,7 +394,7 @@ static int addTitle(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inte
     return TCL_OK;
 }
 
-static int setBgImage(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setBgImage(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     const char *image;
     Alignment align = Center;
@@ -413,7 +413,7 @@ static int setBgImage(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *in
     return TCL_OK;
 }
 
-static int setColors(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setColors(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     char *name;
     int *palette = 0;
@@ -426,9 +426,9 @@ static int setColors(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *int
       return TCL_ERROR;
     }
     
-    if(!strcasecmp(name,"defaultPalette")) palette = defaultPalette; else
-    if(!strcasecmp(name,"whiteOnBlackPalette")) palette = whiteOnBlackPalette; else
-    if(!strcasecmp(name,"transparentPalette")) palette = transparentPalette; else {
+    if(!strcasecmp(name,"defaultPalette")) palette = (int*)defaultPalette; else
+    if(!strcasecmp(name,"whiteOnBlackPalette")) palette = (int*)whiteOnBlackPalette; else
+    if(!strcasecmp(name,"transparentPalette")) palette = (int*)transparentPalette; else {
       if(Tcl_ListObjGetElements(interp,objv[3],&argc,&argv) != TCL_OK) {
         Tcl_WrongNumArgs(interp,2,objv,"palette");
         return TCL_ERROR;
@@ -443,7 +443,7 @@ static int setColors(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *int
     return TCL_OK;
 }
 
-static int setWallpaper(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int setWallpaper(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     const char *image;
     if(objc < 4 ||
@@ -455,7 +455,7 @@ static int setWallpaper(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *
     return TCL_OK;
 }
 
-static int XAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int XAxisCmd(int second,Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int cmd;
     enum commands {
@@ -626,7 +626,7 @@ static int XAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_I
     return TCL_OK;
 }
 
-static int YAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int YAxisCmd(int second,Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int cmd;
     enum commands {
@@ -857,7 +857,7 @@ static int YAxisCmd(int second,Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_I
     return TCL_OK;
 }
 
-static int LayerCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int LayerCmd(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int cmd, layer, datasetID;
     DataSet *dataset;
@@ -1198,7 +1198,7 @@ static int LayerCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inte
     return TCL_OK;
 }
 
-static int dashLineColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int dashLineColor(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int color;
     int pattern;
@@ -1213,7 +1213,7 @@ static int dashLineColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp 
     return TCL_OK;
 }
 
-static int patternColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int patternColor(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int i,argc;
     int width = 0;
@@ -1247,7 +1247,7 @@ static int patternColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *
     return TCL_OK;
 }
 
-static int gradientColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int gradientColor(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int *array,argc;
     char *name = 0;
@@ -1268,11 +1268,11 @@ static int gradientColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp 
     }
     // Check if it is name
     if(argc == 1 && (name = Tcl_GetStringFromObj(argv[0],0)) &&
-       (!strcasecmp("goldGradient",name) && (array = goldGradient)) ||
-       (!strcasecmp("silverGradient",name) && (array = silverGradient)) ||
-       (!strcasecmp("redMetalGradient",name) && (array = redMetalGradient)) ||
-       (!strcasecmp("blueMetalGradient",name) && (array = blueMetalGradient)) ||
-       (!strcasecmp("greenMetalGradient",name) && (array = greenMetalGradient)) ) {
+       (!strcasecmp("goldGradient",name) && (array = (int*)goldGradient)) ||
+       (!strcasecmp("silverGradient",name) && (array = (int*)silverGradient)) ||
+       (!strcasecmp("redMetalGradient",name) && (array = (int*)redMetalGradient)) ||
+       (!strcasecmp("blueMetalGradient",name) && (array = (int*)blueMetalGradient)) ||
+       (!strcasecmp("greenMetalGradient",name) && (array = (int*)greenMetalGradient)) ) {
       Tcl_SetObjResult(interp,Tcl_NewIntObj(chart->chart->gradientColor(array,angle,scale,startx,starty)));
       return TCL_OK;
     } else {
@@ -1284,7 +1284,7 @@ static int gradientColor(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp 
     return TCL_OK;
 }
 
-static int addText(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int addText(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int x,y;
     const char *text;
@@ -1312,7 +1312,7 @@ static int addText(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *inter
     return TCL_OK;
 }
 
-static int PieCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
+static int PieCmd(Ns_Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp)
 {
     int cmd;
     enum commands {
@@ -1387,7 +1387,7 @@ static int PieCmd(Chart *chart,int objc,Tcl_Obj *CONST objv[],Tcl_Interp *interp
 static int ChartCmd(ClientData arg,Tcl_Interp *interp,int objc,Tcl_Obj *CONST objv[])
 {
     int i,cmd;
-    Chart *chart = 0;
+    Ns_Chart *chart = 0;
 
     enum commands {
         cmdGc, cmdCharts,
