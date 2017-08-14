@@ -133,7 +133,7 @@ extern "C" {
  * Load the config parameters, setup the structures
  */
 
-    NS_EXPORT int Ns_ModuleInit(char *server, char *module) {
+    NS_EXPORT int Ns_ModuleInit(const char *server, const char *module) {
         char *path;
 
          Ns_Log(Notice, "nschartdir module version %s server: %s", _VERSION, server);

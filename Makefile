@@ -15,7 +15,7 @@ MOD      =  nschartdir.so
 #
 # Objects to build.
 #
-OBJS     = nschartdir.o
+MODOBJS     = nschartdir.o
 CFLAGS	 = $(CDFLAGS)
 MODLIBS	 = $(CDLIBS)
 
