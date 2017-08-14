@@ -78,7 +78,7 @@ typedef struct _Chart {
 } Ns_Chart;
 
 static int ChartCmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CONST objv[]);
-static int ChartInterpInit(Tcl_Interp * interp, void *context);
+static int ChartInterpInit(Tcl_Interp * interp, const void *context);
 static void ChartGC(void *arg);
 
 static Ns_Chart *chartList = 0;
@@ -156,7 +156,7 @@ extern "C" {
 /*
  * Add ns_chartdir commands to interp.
  */
-static int ChartInterpInit(Tcl_Interp * interp, void *context)
+static int ChartInterpInit(Tcl_Interp * interp, const void *context)
 {
     Tcl_CreateObjCommand(interp, "ns_chartdir", ChartCmd, NULL, NULL);
     return NS_OK;
@@ -1488,7 +1488,7 @@ static int ChartCmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CON
 
     switch (cmd) {
     case cmdVersion:
-        Tcl_AppendResult(interp, "ns_chartdir ", VERSION, 0);
+        Tcl_AppendResult(interp, "ns_chartdir ", _VERSION, 0);
         break;
 
     case cmdGc:
