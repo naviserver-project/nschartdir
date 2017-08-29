@@ -134,7 +134,7 @@ extern "C" {
  */
 
     NS_EXPORT int Ns_ModuleInit(const char *server, const char *module) {
-        char *path;
+        const char *path;
 
          Ns_Log(Notice, "nschartdir module version %s server: %s", _VERSION, server);
 
