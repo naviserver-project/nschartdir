@@ -1630,3 +1630,13 @@ static int ChartCmd(ClientData arg, Tcl_Interp * interp, int objc, Tcl_Obj * CON
     }
     return TCL_OK;
 }
+
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * indent-tabs-mode: nil
+ * End:
+ */
