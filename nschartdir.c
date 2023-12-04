@@ -143,7 +143,9 @@ extern "C" {
          Ns_ConfigGetInt(path, "gc_interval", &chartGCInterval);
         /* Schedule garbage collection proc for automatic chart close/cleanup */
         if (chartGCInterval > 0) {
-            Ns_ScheduleProc((Ns_SchedProc *)ChartGC, 0, 1, chartGCInterval);
+            Ns_Time interval;
+            interval.sec = chartGCInterval;  interval.usec = 0;
+            Ns_ScheduleProcEx((Ns_SchedProc *)ChartGC, 0, NS_SCHED_THREAD, &interval, NULL);
             Ns_Log(Notice, "ns_chartdir: scheduling GC proc for every %d secs", chartGCInterval);
         }
         Ns_MutexSetName2(&chartMutex, "nschartdir", "chart");
